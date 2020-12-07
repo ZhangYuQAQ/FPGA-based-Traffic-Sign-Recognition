@@ -1,9 +1,10 @@
 # FPGA-based-Traffic-Sign-Recognition
 We designed a traffic sign recognition system that can recognize traffic signs quickly. 
 
-##Cover
+## Cover
 
-！[Cover](https://github.com/ZhangYuQAQ/FPGA-based-Traffic-Sign-Recognition/blob/master/cover.jpg)
+![Cover](https://github.com/ZhangYuQAQ/FPGA-based-Traffic-Sign-Recognition/blob/master/cover1.png)
+
 ## Team
 Yu Zhang </br>
 Xinye Cao 
