@@ -1,5 +1,6 @@
 # FPGA-based-Traffic-Sign-Recognition
-We designed a traffic sign recognition system that can recognize traffic signs quickly. 
+We designed a traffic sign recognition system that can recognize traffic signs quickly.<br>
+**The total power consumption is only 2.3 Watt(W), and the accuracy rate can reach 95%, which is better than the existing circuits of the same scale.**
 
 ## Cover
 
