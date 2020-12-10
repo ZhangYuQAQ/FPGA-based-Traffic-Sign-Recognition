@@ -25,20 +25,20 @@ xlnk.xlnk_reset()
 mytype = 'B,'*31 + 'B'
 dt = np.dtype(mytype)
 img = xlnk.cma_array(shape=(3,58,58), dtype=np.uint8)
-conv_weight_1x1_all = xlnk.cma_array(shape=(59,16), dtype=dt)
-conv_weight_3x3_all = xlnk.cma_array(shape=(12,9), dtype=dt)
-bias_all = xlnk.cma_array(shape=(31), dtype=dt)
-DDR_dw1_pool_out = xlnk.cma_array(shape=(900), dtype=dt)
-DDR_dw2_pool_out = xlnk.cma_array(shape=(512), dtype=dt)
-DDR_buf = xlnk.cma_array(shape=(3240), dtype=dt)
+conv_weight_1x1_all = xlnk.cma_array(shape=(59,16*32), dtype=np.int8)
+conv_weight_3x3_all = xlnk.cma_array(shape=(12,9*32), dtype=np.int8)
+bias_all = xlnk.cma_array(shape=(31*32), dtype=np.int8)
+DDR_dw1_pool_out = xlnk.cma_array(shape=(900*32), dtype=np.int8)
+DDR_dw2_pool_out = xlnk.cma_array(shape=(512*32), dtype=np.int8)
+DDR_buf = xlnk.cma_array(shape=(1620*32), dtype=np.int8)
 
-cla = xlnk.cma_array(shape=(2), dtype=np.int)
+cla = xlnk.cma_array(shape=(1), dtype=np.int)
 
 print("Allocating memory done")
 
 
 ########### Load parameters from SD card to DDR
-params = np.fromfile("TrafficSign.bin", dtype=dt)
+params = np.fromfile("TrafficSign.bin", dtype=np.int8)
 idx = 0
 np.copyto(conv_weight_1x1_all, params[idx:idx+conv_weight_1x1_all.size].reshape(conv_weight_1x1_all.shape))
 idx += conv_weight_1x1_all.size
@@ -154,14 +154,14 @@ print("Bitstream loaded")
 
 SkyNet = overlay.SEUer_0
 
-SkyNet.write(0x10, img.physical_address)
-SkyNet.write(0x1c, conv_weight_1x1_all.physical_address)
-SkyNet.write(0x28, conv_weight_3x3_all.physical_address)
-SkyNet.write(0x34, bias_all.physical_address)
-SkyNet.write(0x40, DDR_dw1_pool_out.physical_address)
-SkyNet.write(0x4c, DDR_dw2_pool_out.physical_address)
-SkyNet.write(0x58, DDR_buf.physical_address)
-SkyNet.write(0x64, cla.physical_address)
+SkyNet.write(0x20, img.physical_address)
+SkyNet.write(0x30, conv_weight_1x1_all.physical_address)
+SkyNet.write(0x40, conv_weight_3x3_all.physical_address)
+SkyNet.write(0x50, bias_all.physical_address)
+SkyNet.write(0x60, DDR_dw1_pool_out.physical_address)
+SkyNet.write(0x70, DDR_dw2_pool_out.physical_address)
+SkyNet.write(0x80, DDR_buf.physical_address)
+SkyNet.write(0x90, cla.physical_address)
 
 
 #rails = pynq.get_rails()
@@ -207,8 +207,8 @@ start = time.time()
 #         output_queue.put(outputs)
 # p1.join()   
 # p2.join()
-last_cla=-1
-for root, dirs, files in os.walk('./traffic-sign/test'):
+# last_cla=-1
+for root, dirs, files in os.walk('./traffic-sign/test/00021'):
     for file in files:
 #         print(file)
         #讀入圖像
@@ -226,9 +226,12 @@ for root, dirs, files in os.walk('./traffic-sign/test'):
         SkyNet.write(0x00, 1)
         isready = SkyNet.read(0x00)
         while( isready == 1 ):
-            isready = SkyNet.read(0x00)
+            isready = SkyNet.read(0x00)        
         print(cla[0])
-        last_cla=cla[0]
+        
+#         last_cla=cla[0]
+        
+        
     
     
 print("**** Detection finished\n")
